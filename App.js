@@ -3,13 +3,14 @@ import { useEffect, useCallback } from 'react';
 import { StyleSheet, Text, View, ImageBackground } from 'react-native';
 import { useFonts } from 'expo-font'; 
 import * as SplashScreen from 'expo-splash-screen';
+// import { AppLoading } from 'expo';
 
 export default function App() {
   const [fontsLoaded] = useFonts({
-    Inter: require('./img/fonts/Inter-Medium.ttf'),
-    'Roboto-Bold': require('./img/fonts/Roboto-Bold.ttf'),
-    'Roboto-Medium': require('./img/fonts/Roboto-Medium.ttf'),
-    'Roboto-Regular': require('./img/fonts/Roboto-Regular.ttf'),
+    Inter: require('./assets/fonts/Inter-Medium.ttf'),
+    'Roboto-Bold': require('./assets/fonts/Roboto-Bold.ttf'),
+    'Roboto-Medium': require('./assets/fonts/Roboto-Medium.ttf'),
+    'Roboto-Regular': require('./assets/fonts/Roboto-Regular.ttf'),
   });
 
   useEffect(() => {
@@ -31,9 +32,11 @@ export default function App() {
 
   return (
     <View style={styles.container} onLayout={onLayoutRootView}>
-      <ImageBackground source={require('./img/bg.webp')} style={styles.image}>
-        <Text style={styles.text}>My new app!</Text>
-        <StatusBar style="auto" />
+      <ImageBackground source={require('./assets/images/bg.webp')} style={styles.image} resizeMode="cover">
+        <View style={styles.wrapper}>
+          <Text style={styles.text}>My new app!</Text>
+          <StatusBar style="auto" />
+        </View>
       </ImageBackground>
     </View>
   );
@@ -43,18 +46,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
+  },
+  image: {
+    flex: 1,
     justifyContent: 'center',
+    alignItems: 'center',
+  },
+  wrapper: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   text: {
     fontFamily: 'Roboto-Medium',
-    color: 'black',
+    color: '#FFFFFF',
     fontSize: 20,
     padding: 10,
-  },
-  image: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
   },
 });
