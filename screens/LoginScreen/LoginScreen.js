@@ -48,6 +48,8 @@ export default function LoginScreen() {
                         <TextInput
                             style={styles.textInputPassword}
                             maxLength={30}
+                            placeholder='Password'
+                            placeholderTextColor='#BDBDBD'
                             value={password}
                             onChangeText={(text) => setPassword(text)}
                             secureTextEntry={passwordVisibility}
@@ -78,7 +80,7 @@ export default function LoginScreen() {
     );
 };
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
@@ -88,7 +90,8 @@ const styles = StyleSheet.create({
     },
     form: {
         paddingHorizontal: 16,
-        paddingVertical: 32,
+        paddingTop: 32,
+        paddingBottom: 133,
         backgroundColor: '#FFFFFF',
         borderWidth: 1,
         borderColor: 'transparent',
@@ -152,8 +155,6 @@ const styles = StyleSheet.create({
     button: {
         padding: 16,
         backgroundColor: '#FF6C00',
-        borderWidth: 1,
-        borderColor: 'transparent',
         borderRadius: 100,
     },
     buttonText: {
