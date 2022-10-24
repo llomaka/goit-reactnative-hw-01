@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect, useCallback } from 'react';
-import { ImageBackground, StyleSheet, View, Text, TextInput, Pressable } from "react-native";
+import { ImageBackground, StyleSheet, View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from "react-native";
 import { useFonts } from 'expo-font'; 
 import * as SplashScreen from 'expo-splash-screen';
 import { useTogglePasswordVisibility } from '../../hooks';
@@ -8,6 +8,7 @@ import { useTogglePasswordVisibility } from '../../hooks';
 export default function LoginScreen() { 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isKeyboardShown, setIsKeyboardShown] = useState(false);
     const { passwordVisibility, buttonText, handlePasswordVisibility } = useTogglePasswordVisibility();
 
     const [fontsLoaded] = useFonts({
@@ -27,56 +28,79 @@ export default function LoginScreen() {
       await SplashScreen.hideAsync();
     }
   }, [fontsLoaded]);
+    
+    const resetForm = () => {
+        setEmail('');
+        setPassword('');
+    };
+    
+    const handleSubmit = () => { 
+        setIsKeyboardShown(false);
+        Keyboard.dismiss();
+        console.log('email: ', email, 'password: ', password);
+        resetForm();
+    };
+
+    const handleKeyboardDismiss = () => { 
+        setIsKeyboardShown(false);
+        Keyboard.dismiss();
+    };
 
   if (!fontsLoaded) {
     return null;
   }
 
     return (
-        <View style={styles.container} onLayout={onLayoutLoginView}>
-            <ImageBackground source={require('../../assets/images/bg.webp')} style={styles.image} resizeMode="cover">
-                <View style={styles.form}>
-                    <Text style={styles.title}>Login</Text>
-                    <TextInput
-                        style={styles.textInput}
-                        placeholder='Email'
-                        placeholderTextColor='#BDBDBD'
-                        value={email}
-                        onChangeText={(text) => setEmail(text)}
-                    />
-                    <View style={styles.textInputContainer}>
-                        <TextInput
-                            style={styles.textInputPassword}
-                            maxLength={30}
-                            placeholder='Password'
-                            placeholderTextColor='#BDBDBD'
-                            value={password}
-                            onChangeText={(text) => setPassword(text)}
-                            secureTextEntry={passwordVisibility}
-                        />
-                        <Pressable
-                            onPress={handlePasswordVisibility}
-                            style={styles.showButton}
-                        >
-                            <Text style={styles.showText}>{buttonText}</Text>
-                        </Pressable>
-                    </View>
-                    <Pressable
-                        onPress={() => console.log('email: ', email, ' password: ', password)}
-                        style={styles.button}
-                    >
-                        <Text style={styles.buttonText}>Sing In</Text>
-                    </Pressable>
-                    <Pressable
-                        onPress={() => console.log('Go to Registration Form')}
-                        style={[styles.button, styles.buttonInvert]}
-                    >
-                        <Text style={[styles.buttonText, styles.buttonTextInvert]}>Do not have an account? Register</Text>
-                    </Pressable>
-                    <StatusBar style="auto" />
-                </View>
-            </ImageBackground>
-        </View>
+        <TouchableWithoutFeedback onPress={handleKeyboardDismiss}>
+            <View style={styles.container} onLayout={onLayoutLoginView}>
+                <ImageBackground source={require('../../assets/images/bg.webp')} style={styles.image} resizeMode="cover">
+                    <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+                        <View style={[styles.form, { paddingBottom: isKeyboardShown ? 32 : 133 }]}>
+                            <Text style={styles.title}>Login</Text>
+                            <TextInput
+                                style={styles.textInput}
+                                placeholder='Email'
+                                placeholderTextColor='#BDBDBD'
+                                value={email}
+                                onChangeText={(text) => setEmail(text)}
+                                onFocus={() => setIsKeyboardShown(true)}
+                            />
+                            <View style={styles.textInputContainer}>
+                                <TextInput
+                                    style={styles.textInputPassword}
+                                    maxLength={30}
+                                    placeholder='Password'
+                                    placeholderTextColor='#BDBDBD'
+                                    value={password}
+                                    onChangeText={(text) => setPassword(text)}
+                                    secureTextEntry={passwordVisibility}
+                                    onFocus={() => setIsKeyboardShown(true)}
+                                />
+                                <Pressable
+                                    onPress={handlePasswordVisibility}
+                                    style={styles.showButton}
+                                >
+                                    <Text style={styles.showText}>{buttonText}</Text>
+                                </Pressable>
+                            </View>
+                            <Pressable
+                                onPress={handleSubmit}
+                                style={styles.button}
+                            >
+                                <Text style={styles.buttonText}>Sing In</Text>
+                            </Pressable>
+                            <Pressable
+                                onPress={() => console.log('Go to Registration Form')}
+                                style={[styles.button, styles.buttonInvert]}
+                            >
+                                <Text style={[styles.buttonText, styles.buttonTextInvert]}>Do not have an account? Register</Text>
+                            </Pressable>
+                            <StatusBar style="auto" />
+                        </View>
+                    </KeyboardAvoidingView>
+                </ImageBackground>
+            </View>
+        </TouchableWithoutFeedback>
     );
 };
 
@@ -91,7 +115,6 @@ export const styles = StyleSheet.create({
     form: {
         paddingHorizontal: 16,
         paddingTop: 32,
-        paddingBottom: 133,
         backgroundColor: '#FFFFFF',
         borderWidth: 1,
         borderColor: 'transparent',
