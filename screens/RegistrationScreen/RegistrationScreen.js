@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect, useCallback } from 'react';
-import { ImageBackground, StyleSheet, View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { ImageBackground, StyleSheet, View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, Dimensions } from "react-native";
 import { useFonts } from 'expo-font'; 
 import * as SplashScreen from 'expo-splash-screen';
 import { useTogglePasswordVisibility } from '../../hooks';
@@ -12,6 +12,7 @@ export default function RegistrationScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isKeyboardShown, setIsKeyboardShown] = useState(false);
+    const [width, setWidth] = useState(Dimensions.get('window').width);
     const { passwordVisibility, buttonText, handlePasswordVisibility } = useTogglePasswordVisibility();
 
     const [fontsLoaded] = useFonts({
@@ -25,6 +26,14 @@ export default function RegistrationScreen() {
     }
     prepare();
   }, []);
+    
+    useEffect(() => { 
+        const onChange = () => {
+            setWidth(Dimensions.get('window').width);
+        };
+        const subscription = Dimensions.addEventListener('change', onChange);
+        return () => subscription?.remove();
+    }, []);
 
   const onLayoutRegistrationView = useCallback(async () => {
     if (fontsLoaded) {
@@ -53,7 +62,7 @@ export default function RegistrationScreen() {
             <View style={styles.container} onLayout={onLayoutRegistrationView}>
                 <ImageBackground source={require('../../assets/images/bg.webp')} style={styles.image} resizeMode="cover">
                     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
-                        <View style={[styles.form, regStyles.formContainer, { paddingBottom: isKeyboardShown ? 32 : 78 }]}>
+                        <View style={[styles.form, regStyles.formContainer, { paddingBottom: isKeyboardShown ? 32 : 78 , paddingHorizontal: width > 500 ? 100 : 16 }]}>
                             <View style={regStyles.avatarContainer}>
                                 <Pressable onPress={() => console.log('Add image')} style={{ borderRadius: 25 }}>
                                     {/* <AddImage width={25} height={25} /> */}

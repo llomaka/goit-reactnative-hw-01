@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { useState, useEffect, useCallback } from 'react';
-import { ImageBackground, StyleSheet, View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback } from "react-native";
+import { ImageBackground, StyleSheet, View, Text, TextInput, Pressable, KeyboardAvoidingView, Platform, Keyboard, TouchableWithoutFeedback, Dimensions } from "react-native";
 import { useFonts } from 'expo-font'; 
 import * as SplashScreen from 'expo-splash-screen';
 import { useTogglePasswordVisibility } from '../../hooks';
@@ -9,6 +9,7 @@ export default function LoginScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isKeyboardShown, setIsKeyboardShown] = useState(false);
+    const [width, setWidth] = useState(Dimensions.get('window').width);
     const { passwordVisibility, buttonText, handlePasswordVisibility } = useTogglePasswordVisibility();
 
     const [fontsLoaded] = useFonts({
@@ -22,6 +23,14 @@ export default function LoginScreen() {
     }
     prepare();
   }, []);
+    
+    useEffect(() => {
+        const onChange = () => {
+            setWidth(Dimensions.get('window').width);
+        };
+        const subscription = Dimensions.addEventListener('change', onChange);
+        return () => subscription?.remove();
+    }, []);
 
   const onLayoutLoginView = useCallback(async () => {
     if (fontsLoaded) {
@@ -55,7 +64,7 @@ export default function LoginScreen() {
             <View style={styles.container} onLayout={onLayoutLoginView}>
                 <ImageBackground source={require('../../assets/images/bg.webp')} style={styles.image} resizeMode="cover">
                     <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
-                        <View style={[styles.form, { paddingBottom: isKeyboardShown ? 32 : 133 }]}>
+                        <View style={[styles.form, { paddingBottom: isKeyboardShown ? 32 : 133, paddingHorizontal: width > 500 ? 100 : 16 }]}>
                             <Text style={styles.title}>Login</Text>
                             <TextInput
                                 style={styles.textInput}
@@ -113,7 +122,6 @@ export const styles = StyleSheet.create({
         justifyContent: 'flex-end',
     },
     form: {
-        paddingHorizontal: 16,
         paddingTop: 32,
         backgroundColor: '#FFFFFF',
         borderWidth: 1,
