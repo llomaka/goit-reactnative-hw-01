@@ -8,6 +8,8 @@ import { useTogglePasswordVisibility } from '../../hooks';
 export default function LoginScreen() { 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isEmailFocused, setIsEmailFocused] = useState(false);
+    const [isPasswordFocused, setIsPasswordFocused] = useState(false);
     const [isKeyboardShown, setIsKeyboardShown] = useState(false);
     const [width, setWidth] = useState(Dimensions.get('window').width);
     const { passwordVisibility, buttonText, handlePasswordVisibility } = useTogglePasswordVisibility();
@@ -67,23 +69,31 @@ export default function LoginScreen() {
                         <View style={[styles.form, { paddingBottom: isKeyboardShown ? 32 : 133, paddingHorizontal: width > 500 ? 100 : 16 }]}>
                             <Text style={styles.title}>Login</Text>
                             <TextInput
-                                style={styles.textInput}
+                                style={[styles.textInput, {backgroundColor: isEmailFocused ? 'transparent' : '#F6F6F6', borderColor: isEmailFocused ? '#FF6C00' : '#E8E8E8'}]}
                                 placeholder='Email'
                                 placeholderTextColor='#BDBDBD'
                                 value={email}
                                 onChangeText={(text) => setEmail(text)}
-                                onFocus={() => setIsKeyboardShown(true)}
+                                onFocus={() => {
+                                    setIsEmailFocused(true)
+                                    setIsKeyboardShown(true)
+                                }}
+                                onBlur={() => setIsEmailFocused(false)}
                             />
                             <View style={styles.textInputContainer}>
                                 <TextInput
-                                    style={styles.textInputPassword}
+                                    style={[styles.textInputPassword, {backgroundColor: isPasswordFocused ? 'transparent' : '#F6F6F6', borderColor: isPasswordFocused ? '#FF6C00' : '#E8E8E8'}]}
                                     maxLength={30}
                                     placeholder='Password'
                                     placeholderTextColor='#BDBDBD'
                                     value={password}
                                     onChangeText={(text) => setPassword(text)}
                                     secureTextEntry={passwordVisibility}
-                                    onFocus={() => setIsKeyboardShown(true)}
+                                    onFocus={() => {
+                                        setIsPasswordFocused(true)
+                                        setIsKeyboardShown(true)
+                                    }}
+                                    onBlur={() => setIsPasswordFocused(false)}
                                 />
                                 <Pressable
                                     onPress={handlePasswordVisibility}
@@ -147,9 +157,7 @@ export const styles = StyleSheet.create({
         fontSize: 16,
         lineHeight: 19,
         color: '#212121',
-        backgroundColor: '#F6F6F6',
         borderWidth: 1,
-        borderColor: '#E8E8E8',
         borderRadius: 8,
     },
     textInputContainer: {

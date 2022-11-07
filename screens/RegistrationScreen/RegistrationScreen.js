@@ -11,6 +11,9 @@ export default function RegistrationScreen() {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [isUsernameFocused, setIsUsernameFocused] = useState(false);
+    const [isEmailFocused, setIsEmailFocused] = useState(false);
+    const [isPasswordFocused, setIsPasswordFocused] = useState(false);
     const [isKeyboardShown, setIsKeyboardShown] = useState(false);
     const [width, setWidth] = useState(Dimensions.get('window').width);
     const { passwordVisibility, buttonText, handlePasswordVisibility } = useTogglePasswordVisibility();
@@ -41,10 +44,17 @@ export default function RegistrationScreen() {
     }
   }, [fontsLoaded]);
     
+    const resetForm = () => {
+        setUsername('');
+        setEmail('');
+        setPassword('');
+    };
+    
     const handleSubmit = () => {
         setIsKeyboardShown(false);
         Keyboard.dismiss();
         console.log('username: ', username, 'email: ', email, 'password: ', password);
+        resetForm();
     };
     
     const handleKeyboardDismiss = () => {
@@ -70,31 +80,43 @@ export default function RegistrationScreen() {
                             </View>
                             <Text style={styles.title}>Registration</Text>
                             <TextInput
-                                style={styles.textInput}
+                                style={[styles.textInput, {backgroundColor: isUsernameFocused ? 'transparent' : '#F6F6F6', borderColor: isUsernameFocused ? '#FF6C00' : '#E8E8E8'}]}
                                 placeholder='Username'
                                 placeholderTextColor='#BDBDBD'
                                 value={username}
                                 onChangeText={(text) => setUsername(text)}
-                                onFocus={() => setIsKeyboardShown(true)}
+                                onFocus={() => {
+                                    setIsUsernameFocused(true)
+                                    setIsKeyboardShown(true)
+                                }}
+                                onBlur={() => setIsUsernameFocused(false)}
                             />
                             <TextInput
-                                style={styles.textInput}
+                                style={[styles.textInput, {backgroundColor: isEmailFocused ? 'transparent' : '#F6F6F6', borderColor: isEmailFocused ? '#FF6C00' : '#E8E8E8'}]}
                                 placeholder='Email'
                                 placeholderTextColor='#BDBDBD'
                                 value={email}
                                 onChangeText={(text) => setEmail(text)}
-                                onFocus={() => setIsKeyboardShown(true)}
+                                onFocus={() => {
+                                    setIsEmailFocused(true)
+                                    setIsKeyboardShown(true)
+                                }}
+                                onBlur={() => setIsEmailFocused(false)}
                             />
                             <View style={styles.textInputContainer}>
                                 <TextInput
-                                    style={styles.textInputPassword}
+                                    style={[styles.textInputPassword, {backgroundColor: isPasswordFocused ? 'transparent' : '#F6F6F6', borderColor: isPasswordFocused ? '#FF6C00' : '#E8E8E8'}]}
                                     maxLength={30}
                                     value={password}
                                     placeholder='Password'
                                     placeholderTextColor='#BDBDBD'
                                     onChangeText={(text) => setPassword(text)}
                                     secureTextEntry={passwordVisibility}
-                                    onFocus={() => setIsKeyboardShown(true)}
+                                    onFocus={() => {
+                                        setIsPasswordFocused(true)
+                                        setIsKeyboardShown(true)
+                                    }}
+                                    onBlur={() => setIsPasswordFocused(false)}
                                 />
                                 <Pressable
                                     onPress={handlePasswordVisibility}
